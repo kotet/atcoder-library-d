@@ -1,0 +1,26 @@
+name: "Test: gdc"
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    name: Dub Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install D compiler
+        uses: dlang-community/setup-dlang@v1
+      - name: Install GDC
+        run: |
+          sudo apt-add-repository ppa:ubuntu-toolchain-r/test
+          sudo apt update
+          sudo apt -y install gdc-9
+          sudo wget https://raw.githubusercontent.com/D-Programming-GDC/GDMD/master/dmd-script -O /usr/bin/gdmd
+          sudo chmod +x /usr/bin/gdmd
+          sudo ln -s /usr/bin/gdc-9 /usr/bin/gdc
+      - name: Dub Test
+        run: ls && dub test --compiler=gdc
