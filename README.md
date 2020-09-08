@@ -1,7 +1,11 @@
 # atcoder-library-d
+
+![](https://github.com/kotet/atcoder-library-d/workflows/Test:%20dmd%20&%20ldc/badge.svg?branch=master)
+![](https://github.com/kotet/atcoder-library-d/workflows/Test:%20gdc/badge.svg?branch=master)
+
 [AtCoder Library (ACL)](https://atcoder.jp/posts/517)
 のD言語移植です。
-`D (DMD 2.091.0)`、`D (GDC 9.2.1)`、`D LDC 1.20.1`で動作することを目標にしています。
+`D (DMD 2.091.0)`、`D (GDC 9.2.1)`、`D (LDC 1.20.1)`で動作することを目標にしています。
 This project is waiting for your contribution.
 
 ## build
