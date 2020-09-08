@@ -22,3 +22,8 @@ docs/
 
 # Code coverage
 *.lst
+
+# output files
+atcoder-library-d-test-library
+dub.selections.json
+snippets.d

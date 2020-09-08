@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"Kotet"
+	],
+	"description": "AtCoder Library for D programming language",
+	"license": "public domain",
+	"name": "atcoder-library-d",
+	"targetType": "library"
+}
