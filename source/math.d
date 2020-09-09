@@ -1,5 +1,5 @@
 module acl.math;
-import acl.math_internal;
+import acl.internal_math;
 
 unittest
 {

@@ -1,6 +1,6 @@
-module acl.math_internal;
+module acl.internal_math;
 
-// --- math_internal ---
+// --- internal_math ---
 
 import std.typecons : Tuple;
 
