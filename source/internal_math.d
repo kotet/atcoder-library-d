@@ -1,10 +1,10 @@
-module acl.math_internal;
+module acl.internal_math;
 
-// --- math_internal ---
+// --- internal_math ---
 
 import std.typecons : Tuple;
 
-ulong safe_mod(long x, long m)
+ulong safeMod(long x, long m)
 {
     x %= m;
     if (x < 0)
@@ -12,9 +12,9 @@ ulong safe_mod(long x, long m)
     return x;
 }
 
-Tuple!(long, long) inv_gcd(long a, long b)
+Tuple!(long, long) invGcd(long a, long b)
 {
-    a = safe_mod(a, b);
+    a = safeMod(a, b);
     if (a == 0)
         return Tuple!(long, long)(b, 0);
     long s = b, t = a, m0 = 0, m1 = 1;
