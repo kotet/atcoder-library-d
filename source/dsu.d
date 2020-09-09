@@ -2,7 +2,7 @@ module acl.dsu;
 
 // --- dsu ---
 
-struct dsu
+struct Dsu
 {
 public:
     this(int n)

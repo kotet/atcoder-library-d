@@ -4,7 +4,7 @@ import acl.internal_bit;
 
 // --- segtree ---
 
-struct segtree(S, alias op, alias e)
+struct Segtree(S, alias op, alias e)
 {
     import std.functional : binaryFun, unaryFun;
     import std.traits : isCallable, Parameters;
@@ -30,7 +30,7 @@ struct segtree(S, alias op, alias e)
     {
 
         _n = cast(int) v.length;
-        log = ceil_pow2(_n);
+        log = celiPow2(_n);
         size = 1 << log;
         d = new S[](2 * size);
         d[] = unit();
@@ -73,17 +73,17 @@ struct segtree(S, alias op, alias e)
         return binaryFun!(op)(sml, smr);
     }
 
-    S all_prod()
+    S allProd()
     {
         return d[1];
     }
 
-    int max_right(alias f)(int l)
+    int maxRight(alias f)(int l)
     {
-        return max_right(l, unaryFun!(f));
+        return maxRight(l, unaryFun!(f));
     }
 
-    int max_right(F)(int l, F f) if (isCallable!F && Parameters!(F).length == 1)
+    int maxRight(F)(int l, F f) if (isCallable!F && Parameters!(F).length == 1)
     {
         assert(0 <= l && l <= _n);
         assert(f(unit()));
@@ -115,12 +115,12 @@ struct segtree(S, alias op, alias e)
         return _n;
     }
 
-    int min_left(alias f)(int r)
+    int minLeft(alias f)(int r)
     {
-        return min_left(r, unaryFun!(f));
+        return minLeft(r, unaryFun!(f));
     }
 
-    int min_left(F)(int r, F f) if (isCallable!F && Parameters!(F).length == 1)
+    int minLeft(F)(int r, F f) if (isCallable!F && Parameters!(F).length == 1)
     {
         assert(0 <= r && r <= _n);
         assert(f(unit()));

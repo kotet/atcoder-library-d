@@ -2,7 +2,7 @@ module acl.maxflow;
 
 // --- maxflow ---
 
-struct mf_graph(Cap)
+struct MFGraph(Cap)
 {
     import std.typecons : Tuple;
 
@@ -13,7 +13,7 @@ public:
         g = new _edge[][](n);
     }
 
-    int add_edge(int from, int to, Cap cap)
+    int addEdge(int from, int to, Cap cap)
     {
         assert(0 <= from && from < _n);
         assert(0 <= to && to < _n);
@@ -31,7 +31,7 @@ public:
         Cap cap, flow;
     }
 
-    edge get_edge(int i)
+    edge getEdge(int i)
     {
         int m = cast(int)(pos.length);
         assert(0 <= i && i < m);
@@ -45,11 +45,11 @@ public:
         int m = cast(int)(pos.length);
         edge[] result;
         foreach (i; 0 .. m)
-            result ~= get_edge(i);
+            result ~= getEdge(i);
         return result;
     }
 
-    void change_edge(int i, Cap new_cap, Cap new_flow)
+    void changeEdge(int i, Cap new_cap, Cap new_flow)
     {
         int m = cast(int)(pos.length);
         assert(0 <= i && i < m);
@@ -140,7 +140,7 @@ public:
         return flow;
     }
 
-    bool[] min_cut(int s)
+    bool[] minCut(int s)
     {
         import std.container : DList;
 

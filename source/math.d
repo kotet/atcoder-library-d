@@ -3,28 +3,28 @@ import acl.internal_math;
 
 unittest
 {
-    assert(pow_mod(12_345_678, 87_654_321, 1_000_000_007) == 904_406_885);
+    assert(powMod(12_345_678, 87_654_321, 1_000_000_007) == 904_406_885);
 
-    assert(inv_mod(7, 1_000_000_007) == 142_857_144);
+    assert(invMod(7, 1_000_000_007) == 142_857_144);
 
     immutable crt_result = crt([80_712, 320_302, 140_367], [
             221_549, 699_312, 496_729
             ]);
     assert(crt_result == Tuple!(long, long)(38_774_484_298_448_350, 76_959_154_983_203_952));
 
-    assert(floor_sum(31_415, 92_653, 58_979, 32_384) == 314_095_480);
+    assert(floorSum(31_415, 92_653, 58_979, 32_384) == 314_095_480);
 }
 
 // --- math ---
 
 import std.typecons : Tuple;
 
-long pow_mod(long x, long n, long m)
+long powMod(long x, long n, long m)
 {
     assert(0 <= n && 1 <= m);
     if (m == 1)
         return 0;
-    ulong r = 1, y = safe_mod(x, m);
+    ulong r = 1, y = safeMod(x, m);
     while (n)
     {
         if (n & 1)
@@ -35,10 +35,10 @@ long pow_mod(long x, long n, long m)
     return r;
 }
 
-long inv_mod(long x, long m)
+long invMod(long x, long m)
 {
     assert(1 <= m);
-    auto z = inv_gcd(x, m);
+    auto z = invGcd(x, m);
     assert(z[0] == 1);
     return z[1];
 }
@@ -50,7 +50,7 @@ Tuple!(long, long) crt(long[] r, long[] m)
     foreach (i; 0 .. r.length)
     {
         assert(1 <= m[i]);
-        long r1 = safe_mod(r[i], m[i]);
+        long r1 = safeMod(r[i], m[i]);
         long m1 = m[i];
         if (m0 < m1)
         {
@@ -69,7 +69,7 @@ Tuple!(long, long) crt(long[] r, long[] m)
         }
         long g, im;
         {
-            auto tmp = inv_gcd(m0, m1);
+            auto tmp = invGcd(m0, m1);
             g = tmp[0];
             im = tmp[1];
         }
@@ -85,7 +85,7 @@ Tuple!(long, long) crt(long[] r, long[] m)
     return Tuple!(long, long)(r0, m0);
 }
 
-long floor_sum(long n, long m, long a, long b)
+long floorSum(long n, long m, long a, long b)
 {
     long ans;
     if (m <= a)
@@ -102,6 +102,6 @@ long floor_sum(long n, long m, long a, long b)
     if (y_max == 0)
         return ans;
     ans += (n - (x_max + a - 1) / a) * y_max;
-    ans += floor_sum(y_max, a, m, (a - x_max % a) % a);
+    ans += floorSum(y_max, a, m, (a - x_max % a) % a);
     return ans;
 }

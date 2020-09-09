@@ -2,7 +2,7 @@ module acl.fenwicktree;
 
 unittest
 {
-    auto ft = fenwick_tree!long(100);
+    auto ft = FenwickTree!long(100);
     ft.add(0, 1);
     ft.add(4, 10);
     ft.add(9, 100);
@@ -11,7 +11,7 @@ unittest
 
 // --- fenwicktree ---
 
-struct fenwick_tree(T)
+struct FenwickTree(T)
 {
     import std.traits : isSigned, Unsigned;
 
