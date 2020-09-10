@@ -12,6 +12,53 @@ ulong safeMod(long x, long m)
     return x;
 }
 
+long ctPowMod(long x, long n, int m)
+{
+    if (m == 1)
+        return 0;
+    uint _m = cast(uint) m;
+    ulong r = 1;
+    ulong y = safeMod(x, m);
+    while (n)
+    {
+        if (n & 1)
+            r = (r * y) % _m;
+        y = (y * y) % _m;
+        n >>= 1;
+    }
+    return r;
+}
+
+bool ctIsPrime(int n)
+{
+    if (n <= 1)
+        return false;
+    if (n == 2 || n == 7 || n == 61)
+        return true;
+    if (n % 2 == 0)
+        return false;
+    long d = n - 1;
+    while (d % 2 == 0)
+        d /= 2;
+    foreach (a; [2, 7, 61])
+    {
+        long t = d;
+        long y = ctPowMod(a, t, n);
+        while (t != n - 1 && y != 1 && y != n - 1)
+        {
+            y = y * y % n;
+            t <<= 1;
+        }
+        if (y != n - 1 && t % 2 == 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+enum bool isPrime(int n) = ctIsPrime(n);
+
 Tuple!(long, long) invGcd(long a, long b)
 {
     a = safeMod(a, b);
