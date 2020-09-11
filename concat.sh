@@ -7,7 +7,7 @@ rm -f ${output_file}
 
 append_file() {
     (
-        prefix=$(mktemp --suffix="$(echo ${1} | sed 's/\//\-/')")
+        prefix=$(mktemp --suffix="$(echo ${1} | sed 's/\//\-/g')")
         result=$(csplit -f "${prefix}" -s "${1}" /---/)
         resultnum=$(printf "%s\n" "${result}" | wc -l)
         i=1
@@ -23,7 +23,7 @@ append_file() {
     )
 }
 
-for file in $(find source/ -type f -name '*.d'); do
+for file in $(find source/acl -type f -name '*.d'); do
     echo "concatnating" ${file} "..."
     append_file ${file}
 done
