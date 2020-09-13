@@ -23,4 +23,4 @@ jobs:
           sudo chmod +x /usr/bin/gdmd
           sudo ln -s /usr/bin/gdc-9 /usr/bin/gdc
       - name: Dub Test
-        run: ls && dub test --compiler=gdc
+        run: dub test --compiler=gdc
