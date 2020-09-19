@@ -24,13 +24,13 @@ struct FenwickTree(T)
         alias U = T;
     }
 public:
-    this(int n)
+    this(int n) @safe nothrow
     {
         _n = n;
         data = new U[](n);
     }
 
-    void add(int p, T x)
+    void add(int p, T x) @safe nothrow @nogc
     {
         assert(0 <= p && p < _n);
         p++;
@@ -41,7 +41,7 @@ public:
         }
     }
 
-    T sum(int l, int r)
+    T sum(int l, int r) @safe nothrow @nogc
     {
         assert(0 <= l && l <= r && r <= _n);
         return sum(r) - sum(l);
@@ -51,7 +51,7 @@ private:
     int _n;
     U[] data;
 
-    U sum(int r)
+    U sum(int r) @safe nothrow @nogc
     {
         U s = 0;
         while (r > 0)

@@ -8,7 +8,7 @@ import acl.internal_bit;
 
 import std.traits : isInstanceOf, isIntegral;
 
-void butterfly(mint)(ref mint[] a) if (isInstanceOf!(StaticModInt, mint))
+void butterfly(mint)(ref mint[] a) @safe nothrow @nogc if (isInstanceOf!(StaticModInt, mint))
 {
     import core.bitop : bsf;
 
@@ -58,7 +58,7 @@ void butterfly(mint)(ref mint[] a) if (isInstanceOf!(StaticModInt, mint))
     }
 }
 
-void butterflyInv(mint)(ref mint[] a) if (isInstanceOf!(StaticModInt, mint))
+void butterflyInv(mint)(ref mint[] a) @safe nothrow @nogc if (isInstanceOf!(StaticModInt, mint))
 {
     import core.bitop : bsf;
 
@@ -109,7 +109,7 @@ void butterflyInv(mint)(ref mint[] a) if (isInstanceOf!(StaticModInt, mint))
     }
 }
 
-mint[] convolution(mint)(ref mint[] a, ref mint[] b)
+mint[] convolution(mint)(ref mint[] a, ref mint[] b) @safe nothrow
         if (isInstanceOf!(StaticModInt, mint))
 {
     import std.algorithm : min, swap;
@@ -145,7 +145,7 @@ mint[] convolution(mint)(ref mint[] a, ref mint[] b)
     return a;
 }
 
-T[] convolution(uint mod = 998_244_353, T)(const ref T[] a, const ref T[] b)
+T[] convolution(uint mod = 998_244_353, T)(const ref T[] a, const ref T[] b) @safe nothrow
         if (isIntegral!(T))
 {
     int n = cast(int)(a.length), m = cast(int)(b.length);
@@ -164,7 +164,7 @@ T[] convolution(uint mod = 998_244_353, T)(const ref T[] a, const ref T[] b)
     return c;
 }
 
-long[] convolutionLL(const ref long[] a, const ref long[] b)
+long[] convolutionLL(const ref long[] a, const ref long[] b) @safe nothrow
 {
     int n = cast(int)(a.length), m = cast(int)(b.length);
     if (!n || !m)

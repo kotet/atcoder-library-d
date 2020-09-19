@@ -8,7 +8,7 @@ struct CompressedSparseRow(E)
 
     int[] start;
     E[] elist;
-    this(int n, const ref Tuple!(int, E)[] edges)
+    this(int n, const ref Tuple!(int, E)[] edges) @safe nothrow
     {
         start = new typeof(start)(n + 1);
         elist = new typeof(elist)(edges.length);
@@ -28,22 +28,22 @@ struct SccGraphImpl
     import std.algorithm : min;
 
 public:
-    this(int n)
+    this(int n) @safe nothrow @nogc
     {
         _n = n;
     }
 
-    int numVerticles()
+    int numVerticles() @safe nothrow @nogc
     {
         return _n;
     }
 
-    void addEdge(int from, int to)
+    void addEdge(int from, int to) @safe nothrow
     {
         edges ~= Tuple!(int, edge)(from, edge(to));
     }
 
-    Tuple!(int, int[]) sccIds()
+    Tuple!(int, int[]) sccIds() @safe nothrow
     {
         auto g = CompressedSparseRow!(edge)(_n, edges);
         int now_ord = 0, group_num = 0;
@@ -93,7 +93,7 @@ public:
         return Tuple!(int, int[])(group_num, ids);
     }
 
-    int[][] scc()
+    int[][] scc() @safe nothrow
     {
         auto ids = sccIds();
         int group_num = ids[0];

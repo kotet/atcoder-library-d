@@ -20,7 +20,7 @@ unittest
 
 import std.typecons : Tuple;
 
-ulong safeMod(long x, long m)
+ulong safeMod(long x, long m) @safe pure nothrow @nogc
 {
     x %= m;
     if (x < 0)
@@ -28,7 +28,7 @@ ulong safeMod(long x, long m)
     return x;
 }
 
-long ctPowMod(long x, long n, int m)
+long ctPowMod(long x, long n, int m) @safe pure nothrow @nogc
 {
     if (m == 1)
         return 0;
@@ -45,7 +45,7 @@ long ctPowMod(long x, long n, int m)
     return r;
 }
 
-bool ctIsPrime(int n)
+bool ctIsPrime(int n) @safe pure nothrow @nogc
 {
     if (n <= 1)
         return false;
@@ -75,7 +75,7 @@ bool ctIsPrime(int n)
 
 enum bool isPrime(int n) = ctIsPrime(n);
 
-Tuple!(long, long) invGcd(long a, long b)
+Tuple!(long, long) invGcd(long a, long b) @safe pure nothrow @nogc
 {
     a = safeMod(a, b);
     if (a == 0)
@@ -98,7 +98,7 @@ Tuple!(long, long) invGcd(long a, long b)
     return Tuple!(long, long)(s, m0);
 }
 
-int ctPrimitiveRoot(int m)
+int ctPrimitiveRoot(int m) @safe pure nothrow @nogc
 {
     if (m == 2)
         return 1;

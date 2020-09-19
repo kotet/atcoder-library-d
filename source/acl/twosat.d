@@ -7,14 +7,14 @@ import acl.internal_scc;
 struct TwoSat
 {
 public:
-    this(int n)
+    this(int n) @safe nothrow
     {
         _n = n;
         _answer = new bool[](n);
         scc = SccGraphImpl(2 * n + 2);
     }
 
-    void addClause(int i, bool f, int j, bool g)
+    void addClause(int i, bool f, int j, bool g) @safe nothrow
     {
         assert(0 <= i && i < _n);
         assert(0 <= j && j < _n);
@@ -22,7 +22,7 @@ public:
         scc.addEdge(2 * j + (g ? 0 : 1), 2 * i + (f ? 1 : 0));
     }
 
-    bool satisfiable()
+    bool satisfiable() @safe nothrow
     {
         auto id = scc.sccIds()[1];
         foreach (i; 0 .. _n)
@@ -34,7 +34,7 @@ public:
         return true;
     }
 
-    bool[] answer()
+    bool[] answer() @safe nothrow @nogc
     {
         return _answer;
     }

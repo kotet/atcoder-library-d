@@ -6,12 +6,12 @@ import acl.internal_scc;
 
 struct SccGraph
 {
-    this(int n)
+    this(int n) @safe nothrow
     {
         internal = SccGraphImpl(n);
     }
 
-    void addEdge(int from, int to)
+    void addEdge(int from, int to) @safe nothrow
     {
         int n = internal.numVerticles();
         assert(0 <= from && from < n);
@@ -19,7 +19,7 @@ struct SccGraph
         internal.addEdge(from, to);
     }
 
-    int[][] scc()
+    int[][] scc() @safe nothrow
     {
         return internal.scc();
     }

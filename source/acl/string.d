@@ -15,7 +15,7 @@ unittest
 
 // --- string ---
 
-int[] saNaive(const ref int[] s)
+int[] saNaive(const ref int[] s) @safe pure nothrow
 {
     import std.range : iota, array;
     import std.algorithm : sort;
@@ -40,7 +40,7 @@ int[] saNaive(const ref int[] s)
     return sa;
 }
 
-int[] saDoubling(const ref int[] s)
+int[] saDoubling(const ref int[] s) @safe pure nothrow
 {
     import std.range : iota, array;
     import std.algorithm : sort, swap;
@@ -204,7 +204,7 @@ int[] saIs(int THRESHOLD_NAIVE = 10, int THRESHOLD_DOUBLING = 40)(const ref int[
     return sa;
 }
 
-int[] suffixArray(const ref int[] s, int upper)
+int[] suffixArray(const ref int[] s, int upper) @safe pure nothrow
 {
     assert(0 <= upper);
     foreach (int d; s)
@@ -231,7 +231,7 @@ int[] suffixArray(T)(const ref T[] s)
     return saIs(s2, now);
 }
 
-int[] suffixArray(string s)
+int[] suffixArray(string s) @safe pure nothrow
 {
     int n = cast(int) s.length;
     auto s2 = new int[](n);
@@ -264,7 +264,7 @@ int[] lcpArray(T)(const ref T[] s, const ref int[] sa)
     return lcp;
 }
 
-int[] lcpArray(const ref string s, const ref int[] sa)
+int[] lcpArray(const ref string s, const ref int[] sa) @safe pure nothrow
 {
     int n = cast(int) s.length;
     auto s2 = new int[](n);
@@ -294,7 +294,7 @@ int[] zAlgorithm(T)(const ref T[] s)
     return z;
 }
 
-int[] zAlgorithm(const ref string s)
+int[] zAlgorithm(const ref string s) @safe pure nothrow
 {
     int n = cast(int) s.length;
     auto s2 = new int[](n);
