@@ -1,5 +1,21 @@
 module acl.internal_math;
 
+unittest
+{
+    assert(safeMod(11, 5) == 1);
+    assert(safeMod(-11, 5) == 4);
+
+    assert(ctPowMod(12_345_678, 87_654_321, 1_000_000_007) == 904_406_885);
+
+    assert(isPrime!(1_000_000_007));
+    assert(!isPrime!(1_000_000_006));
+
+    assert(invGcd(7, 4) == Tuple!(long, long)(1, 3));
+    assert(invGcd(630, 300) == Tuple!(long, long)(30, 1));
+
+    assert(primitiveRoot!(7) == 3);
+}
+
 // --- internal_math ---
 
 import std.typecons : Tuple;
@@ -81,3 +97,46 @@ Tuple!(long, long) invGcd(long a, long b)
         m0 += b / s;
     return Tuple!(long, long)(s, m0);
 }
+
+int ctPrimitiveRoot(int m)
+{
+    if (m == 2)
+        return 1;
+    if (m == 167_772_161)
+        return 3;
+    if (m == 469_762_049)
+        return 3;
+    if (m == 754_974_721)
+        return 11;
+    if (m == 998_244_353)
+        return 3;
+    int[20] divs;
+    divs[0] = 2;
+    int cnt = 1;
+    int x = (m - 1) / 2;
+    while (x % 2 == 0)
+        x /= 2;
+    for (int i = 3; (cast(long) i) * i <= x; i += 2)
+        if (x % i == 0)
+        {
+            divs[cnt++] = i;
+            while (x % i == 0)
+                x /= i;
+        }
+    if (x > 1)
+        divs[cnt++] = x;
+    for (int g = 2;; g++)
+    {
+        bool ok = true;
+        foreach (i; 0 .. cnt)
+            if (ctPowMod(g, (m - 1) / divs[i], m) == 1)
+            {
+                ok = false;
+                break;
+            }
+        if (ok)
+            return g;
+    }
+}
+
+enum primitiveRoot(int m) = ctPrimitiveRoot(m);
