@@ -1,5 +1,54 @@
 module acl.dsu;
 
+unittest
+{
+    auto uf = Dsu(0);
+    assert([] == uf.groups());
+}
+
+unittest
+{
+    Dsu uf;
+    assert([] == uf.groups());
+}
+
+unittest
+{
+    Dsu uf;
+    uf = Dsu(10);
+}
+
+unittest
+{
+    auto uf = Dsu(2);
+    assert(!uf.same(0, 1));
+    int x = uf.merge(0, 1);
+    assert(x == uf.leader(0));
+    assert(x == uf.leader(1));
+    assert(uf.same(0, 1));
+    assert(2 == uf.size(0));
+}
+
+unittest
+{
+    int n = 500_000;
+    auto uf = Dsu(n);
+    foreach (i; 0 .. n - 1)
+        uf.merge(i, i + 1);
+    assert(n == uf.size(0));
+    assert(1 == uf.groups().length);
+}
+
+unittest
+{
+    int n = 500_000;
+    auto uf = Dsu(n);
+    foreach_reverse (i; 0 .. n - 2 + 1)
+        uf.merge(i, i + 1);
+    assert(n == uf.size(0));
+    assert(1 == uf.groups().length);
+}
+
 // --- dsu ---
 
 struct Dsu
