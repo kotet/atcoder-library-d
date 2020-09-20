@@ -19,7 +19,7 @@ unittest
 
 import std.typecons : Tuple;
 
-long powMod(long x, long n, long m)
+long powMod(long x, long n, long m) @safe pure nothrow @nogc
 {
     assert(0 <= n && 1 <= m);
     if (m == 1)
@@ -35,7 +35,7 @@ long powMod(long x, long n, long m)
     return r;
 }
 
-long invMod(long x, long m)
+long invMod(long x, long m) @safe pure nothrow @nogc
 {
     assert(1 <= m);
     auto z = invGcd(x, m);
@@ -43,7 +43,7 @@ long invMod(long x, long m)
     return z[1];
 }
 
-Tuple!(long, long) crt(long[] r, long[] m)
+Tuple!(long, long) crt(long[] r, long[] m) @safe pure nothrow @nogc
 {
     assert(r.length == m.length);
     long r0 = 0, m0 = 1;
@@ -85,7 +85,7 @@ Tuple!(long, long) crt(long[] r, long[] m)
     return Tuple!(long, long)(r0, m0);
 }
 
-long floorSum(long n, long m, long a, long b)
+long floorSum(long n, long m, long a, long b) @safe pure nothrow @nogc
 {
     long ans;
     if (m <= a)

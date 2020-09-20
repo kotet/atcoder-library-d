@@ -59,6 +59,7 @@ public:
         p += size;
         foreach_reverse (i; 1 .. log + 1)
             push(p >> i);
+        d[p] = x;
         foreach (i; 1 .. log + 1)
             update(p >> i);
     }
