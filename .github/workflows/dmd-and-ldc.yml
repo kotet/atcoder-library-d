@@ -23,5 +23,14 @@ jobs:
               with:
                   compiler: ${{ matrix.dc }}
 
+            - name: Install libcurl
+              run: sudo apt update && sudo apt install -y libcurl4-openssl-dev
+
             - name: Run tests
-              run: dub test
+              run: dub test -b unittest-cov
+            
+            - name: Upload coverage data
+              if: matrix.dc == 'dmd-2.091.0'
+              env:
+                COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+              run: dub run doveralls
