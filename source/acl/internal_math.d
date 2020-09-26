@@ -18,6 +18,47 @@ unittest
 
 unittest
 {
+    foreach (m; 1 .. 100 + 1)
+    {
+        auto bt = Barrett(m);
+        foreach (a; 0 .. m)
+            foreach (b; 0 .. m)
+            {
+                assert(a * b % m == bt.mul(a, b));
+            }
+    }
+    assert(0 == Barrett(1).mul(0, 0));
+}
+
+unittest
+{
+    immutable int mod_upper = int.max;
+    for (uint mod = mod_upper; mod >= mod_upper - 20; mod--)
+    {
+        auto bt = Barrett(mod);
+        uint[] v;
+        foreach (i; 0 .. 10)
+        {
+            v ~= i;
+            v ~= mod - i;
+            v ~= mod / 2 + i;
+            v ~= mod / 2 - i;
+        }
+        foreach (a; v)
+        {
+            long a2 = a;
+            assert((a2 * a2) % mod == bt.mul(a, a));
+            foreach (b; v)
+            {
+                long b2 = b;
+                assert((a2 * b2) % mod == bt.mul(a, b));
+            }
+        }
+    }
+}
+
+unittest
+{
     bool isPrimeNaive(long n)
     {
         assert(0 <= n && n <= int.max);
@@ -172,6 +213,50 @@ ulong safeMod(long x, long m) @safe pure nothrow @nogc
     if (x < 0)
         x += m;
     return x;
+}
+
+ulong[2] umul128(ulong a, ulong b) @safe @nogc pure nothrow
+{
+    ulong au = a >> 32;
+    ulong bu = b >> 32;
+    ulong al = a & ((1UL << 32) - 1);
+    ulong bl = b & ((1UL << 32) - 1);
+    ulong t = al * bl;
+    ulong w3 = t & ((1UL << 32) - 1);
+    ulong k = t >> 32;
+    t = au * bl + k;
+    k = t & ((1UL << 32) - 1);
+    ulong w1 = t >> 32;
+    t = al * bu + k;
+    k = t >> 32;
+    return [au * bu + w1 + k, t << 32 + w3];
+}
+
+struct Barrett
+{
+    uint _m;
+    ulong im;
+    this(uint m) @safe @nogc pure nothrow
+    {
+        _m = m;
+        im = (cast(ulong)(-1)) / m + 1;
+    }
+
+    uint umod() @safe @nogc pure nothrow
+    {
+        return _m;
+    }
+
+    uint mul(uint a, uint b) @safe @nogc pure nothrow
+    {
+        ulong z = a;
+        z *= b;
+        ulong x = umul128(z, im)[0];
+        uint v = cast(uint)(z - x * _m);
+        if (_m <= v)
+            v += _m;
+        return v;
+    }
 }
 
 long ctPowMod(long x, long n, int m) @safe pure nothrow @nogc
