@@ -4,11 +4,286 @@ import acl.internal_math;
 import acl.modint;
 import acl.internal_bit;
 
+unittest
+{
+    assert(cast(int[])([]) == convolution(cast(int[])([]), cast(int[])([])));
+    assert(cast(int[])([]) == convolution(cast(int[])([]), [1, 2]));
+    assert(cast(int[])([]) == convolution([1, 2], cast(int[])([])));
+    assert(cast(int[])([]) == convolution([1], cast(int[])([])));
+
+    assert(cast(long[])([]) == convolution(cast(long[])([]), cast(long[])([])));
+    assert(cast(long[])([]) == convolution(cast(long[])([]), [1L, 2L]));
+    assert(cast(modint998244353[])([]) == convolution(cast(modint998244353[])([]),
+            cast(modint998244353[])([])));
+    assert(cast(modint998244353[])([]) == convolution(cast(modint998244353[])([]),
+            [modint998244353(1), modint998244353(2)]));
+}
+
+mint[] convNaive(mint)(mint[] a, mint[] b) if (isInstanceOf!(StaticModInt, mint))
+{
+    int n = cast(int) a.length, m = cast(int) b.length;
+    auto c = new mint[](n + m - 1);
+    foreach (i; 0 .. n)
+        foreach (j; 0 .. m)
+            c[i + j] += a[i] * b[j];
+    return c;
+}
+
+T[] convNaive(int MOD, T)(T[] a, T[] b) if (isIntegral!(T))
+{
+    int n = cast(int) a.length, m = cast(int) b.length;
+    auto c = new T[](n + m - 1);
+    foreach (i; 0 .. n)
+        foreach (j; 0 .. m)
+        {
+            c[i + j] += cast(T)((cast(long) a[i] * cast(long) b[j]) % MOD);
+            if (c[i + j] >= MOD)
+                c[i + j] -= MOD;
+        }
+    return c;
+}
+
+unittest
+{
+    import std.random : Mt19937, uniform;
+
+    Mt19937 rnd;
+    {
+        int n = 1234, m = 2345;
+        auto a = new modint998244353[](n);
+        auto b = new modint998244353[](m);
+        foreach (i; 0 .. n)
+            a[i] = modint998244353(uniform(0, modint998244353.mod(), rnd));
+        foreach (i; 0 .. m)
+            b[i] = modint998244353(uniform(0, modint998244353.mod(), rnd));
+        assert(convNaive(a, b) == convolution(a, b));
+    }
+    {
+        enum MOD = 998_244_353;
+        alias mint = StaticModInt!MOD;
+        foreach (n; 1 .. 20)
+            foreach (m; 1 .. 20)
+            {
+                auto a = new mint[](n);
+                auto b = new mint[](m);
+                foreach (i; 0 .. n)
+                    a[i] = mint(uniform(0, MOD, rnd));
+                foreach (i; 0 .. m)
+                    b[i] = mint(uniform(0, MOD, rnd));
+                assert(convNaive(a, b) == convolution(a, b));
+            }
+    }
+    {
+        enum MOD = 924_844_033;
+        alias mint = StaticModInt!MOD;
+        foreach (n; 1 .. 20)
+            foreach (m; 1 .. 20)
+            {
+                auto a = new mint[](n);
+                auto b = new mint[](m);
+                foreach (i; 0 .. n)
+                    a[i] = mint(uniform(0, MOD, rnd));
+                foreach (i; 0 .. m)
+                    b[i] = mint(uniform(0, MOD, rnd));
+                assert(convNaive(a, b) == convolution(a, b));
+            }
+    }
+}
+
+unittest
+{
+
+    import std.random : Mt19937, uniform;
+
+    Mt19937 rnd;
+    {
+        enum MOD = 998_244_353;
+        alias mint = StaticModInt!MOD;
+        foreach (n; 1 .. 20)
+            foreach (m; 1 .. 20)
+            {
+                auto a = new uint[](n);
+                auto b = new uint[](m);
+                foreach (i; 0 .. n)
+                    a[i] = uniform(0, MOD, rnd);
+                foreach (i; 0 .. m)
+                    b[i] = uniform(0, MOD, rnd);
+                assert(convNaive!MOD(a, b) == convolution(a, b));
+                assert(convNaive!MOD(a, b) == convolution!MOD(a, b));
+            }
+    }
+    {
+        enum MOD = 924_844_033;
+        alias mint = StaticModInt!MOD;
+        foreach (n; 1 .. 20)
+            foreach (m; 1 .. 20)
+            {
+                auto a = new uint[](n);
+                auto b = new uint[](m);
+                foreach (i; 0 .. n)
+                    a[i] = uniform(0, MOD, rnd);
+                foreach (i; 0 .. m)
+                    b[i] = uniform(0, MOD, rnd);
+                assert(convNaive!MOD(a, b) == convolution!MOD(a, b));
+            }
+    }
+    {
+        enum MOD = 998_244_353;
+        alias mint = StaticModInt!MOD;
+        foreach (n; 1 .. 20)
+            foreach (m; 1 .. 20)
+            {
+                auto a = new long[](n);
+                auto b = new long[](m);
+                foreach (i; 0 .. n)
+                    a[i] = uniform(0, MOD, rnd);
+                foreach (i; 0 .. m)
+                    b[i] = uniform(0, MOD, rnd);
+                assert(convNaive!MOD(a, b) == convolution(a, b));
+                assert(convNaive!MOD(a, b) == convolution!MOD(a, b));
+            }
+    }
+    {
+        enum MOD = 924_844_033;
+        alias mint = StaticModInt!MOD;
+        foreach (n; 1 .. 20)
+            foreach (m; 1 .. 20)
+            {
+                auto a = new long[](n);
+                auto b = new long[](m);
+                foreach (i; 0 .. n)
+                    a[i] = uniform(0, MOD, rnd);
+                foreach (i; 0 .. m)
+                    b[i] = uniform(0, MOD, rnd);
+                assert(convNaive!MOD(a, b) == convolution!MOD(a, b));
+            }
+    }
+    {
+        enum MOD = 998_244_353;
+        alias mint = StaticModInt!MOD;
+        foreach (n; 1 .. 20)
+            foreach (m; 1 .. 20)
+            {
+                auto a = new ulong[](n);
+                auto b = new ulong[](m);
+                foreach (i; 0 .. n)
+                    a[i] = uniform(0, MOD, rnd);
+                foreach (i; 0 .. m)
+                    b[i] = uniform(0, MOD, rnd);
+                assert(convNaive!MOD(a, b) == convolution(a, b));
+                assert(convNaive!MOD(a, b) == convolution!MOD(a, b));
+            }
+    }
+    {
+        enum MOD = 924_844_033;
+        alias mint = StaticModInt!MOD;
+        foreach (n; 1 .. 20)
+            foreach (m; 1 .. 20)
+            {
+                auto a = new ulong[](n);
+                auto b = new ulong[](m);
+                foreach (i; 0 .. n)
+                    a[i] = uniform(0, MOD, rnd);
+                foreach (i; 0 .. m)
+                    b[i] = uniform(0, MOD, rnd);
+                assert(convNaive!MOD(a, b) == convolution!MOD(a, b));
+            }
+    }
+}
+
+unittest
+{
+    long[] convLLNaive(long[] a, long[] b)
+    {
+        int n = cast(int) a.length, m = cast(int) b.length;
+        auto c = new long[](n + m - 1);
+        foreach (i; 0 .. n)
+            foreach (j; 0 .. m)
+                c[i + j] += a[i] * b[j];
+        return c;
+    }
+
+    import std.random : Mt19937, uniform;
+
+    Mt19937 rnd;
+    foreach (n; 1 .. 20)
+        foreach (m; 1 .. 20)
+        {
+            auto a = new long[](n);
+            auto b = new long[](m);
+            foreach (i; 0 .. n)
+                a[i] = uniform(-500_000, 500_000, rnd);
+            foreach (i; 0 .. m)
+                b[i] = uniform(-500_000, 500_000, rnd);
+            assert(convLLNaive(a, b) == convolutionLL(a, b));
+        }
+}
+
+unittest
+{
+    static immutable ulong MOD1 = 90 * (2 ^^ 23) + 1;
+    static immutable ulong MOD2 = 10 * (2 ^^ 24) + 1;
+    static immutable ulong MOD3 = 14 * (2 ^^ 25) + 1;
+    static assert(MOD1 == 754_974_721 && MOD2 == 167_772_161 && MOD3 == 469_762_049);
+    static immutable ulong M2M3 = MOD2 * MOD3;
+    static immutable ulong M1M3 = MOD1 * MOD3;
+    static immutable ulong M1M2 = MOD1 * MOD2;
+    foreach (i; -1000 .. 1000 + 1)
+    {
+        long[] a = [0 - M1M2 - M1M3 - M2M3 + i];
+        long[] b = [1];
+        assert(a == convolutionLL(a, b));
+    }
+    foreach (i; 0 .. 1000)
+    {
+        long[] a = [long.min + i];
+        long[] b = [1];
+        assert(a == convolutionLL(a, b));
+    }
+    foreach (i; 0 .. 1000)
+    {
+        long[] a = [long.max - i];
+        long[] b = [1];
+        assert(a == convolutionLL(a, b));
+    }
+}
+
+unittest
+{
+    import std.random : Mt19937, uniform;
+
+    Mt19937 rnd;
+    enum MOD = 128 * 5 + 1;
+    auto a = new long[](64);
+    auto b = new long[](65);
+    foreach (i; 0 .. 64)
+        a[i] = uniform(0, MOD);
+    foreach (i; 0 .. 65)
+        b[i] = uniform(0, MOD);
+    assert(convNaive!(MOD)(a, b) == convolution!(MOD)(a, b));
+}
+
+unittest
+{
+    import std.random : Mt19937, uniform;
+
+    Mt19937 rnd;
+    enum MOD = 2048 * 9 + 1;
+    auto a = new long[](1024);
+    auto b = new long[](1025);
+    foreach (i; 0 .. 1024)
+        a[i] = uniform(0, MOD);
+    foreach (i; 0 .. 1025)
+        b[i] = uniform(0, MOD);
+    assert(convNaive!(MOD)(a, b) == convolution!(MOD)(a, b));
+}
+
 // --- convolution ---
 
 import std.traits : isInstanceOf, isIntegral;
 
-void butterfly(mint)(ref mint[] a) @safe nothrow @nogc if (isInstanceOf!(StaticModInt, mint))
+void butterfly(mint)(mint[] a) @safe nothrow @nogc
+        if (isInstanceOf!(StaticModInt, mint))
 {
     import core.bitop : bsf;
 
@@ -58,7 +333,8 @@ void butterfly(mint)(ref mint[] a) @safe nothrow @nogc if (isInstanceOf!(StaticM
     }
 }
 
-void butterflyInv(mint)(ref mint[] a) @safe nothrow @nogc if (isInstanceOf!(StaticModInt, mint))
+void butterflyInv(mint)(mint[] a) @safe nothrow @nogc
+        if (isInstanceOf!(StaticModInt, mint))
 {
     import core.bitop : bsf;
 
@@ -83,7 +359,7 @@ void butterflyInv(mint)(ref mint[] a) @safe nothrow @nogc if (isInstanceOf!(Stat
             ie *= ie;
         }
         mint now = 1;
-        foreach (i; 0 .. cnt2 - 2)
+        foreach (i; 0 .. cnt2 - 2 + 1)
         {
             sum_ie[i] = ies[i] * now;
             now *= es[i];
@@ -109,7 +385,7 @@ void butterflyInv(mint)(ref mint[] a) @safe nothrow @nogc if (isInstanceOf!(Stat
     }
 }
 
-mint[] convolution(mint)(ref mint[] a, ref mint[] b) @safe nothrow
+mint[] convolution(mint)(mint[] a, mint[] b) @safe nothrow 
         if (isInstanceOf!(StaticModInt, mint))
 {
     import std.algorithm : min, swap;
@@ -145,7 +421,7 @@ mint[] convolution(mint)(ref mint[] a, ref mint[] b) @safe nothrow
     return a;
 }
 
-T[] convolution(uint mod = 998_244_353, T)(const ref T[] a, const ref T[] b) @safe nothrow
+T[] convolution(uint mod = 998_244_353, T)(T[] a, T[] b) @safe nothrow 
         if (isIntegral!(T))
 {
     int n = cast(int)(a.length), m = cast(int)(b.length);
@@ -164,7 +440,7 @@ T[] convolution(uint mod = 998_244_353, T)(const ref T[] a, const ref T[] b) @sa
     return c;
 }
 
-long[] convolutionLL(const ref long[] a, const ref long[] b) @safe nothrow
+long[] convolutionLL(long[] a, long[] b) @safe nothrow
 {
     int n = cast(int)(a.length), m = cast(int)(b.length);
     if (!n || !m)
@@ -177,9 +453,9 @@ long[] convolutionLL(const ref long[] a, const ref long[] b) @safe nothrow
     static immutable ulong M1M3 = MOD1 * MOD3;
     static immutable ulong M1M2 = MOD1 * MOD2;
     static immutable ulong M1M2M3 = MOD1 * MOD2 * MOD3;
-    static immutable ulong i1 = invGcd(M2M3, MOD1)[1];
-    static immutable ulong i2 = invGcd(M1M3, MOD2)[1];
-    static immutable ulong i3 = invGcd(M1M2, MOD3)[1];
+    static immutable ulong i1 = invGcd(MOD2 * MOD3, MOD1)[1];
+    static immutable ulong i2 = invGcd(MOD1 * MOD3, MOD2)[1];
+    static immutable ulong i3 = invGcd(MOD1 * MOD2, MOD3)[1];
 
     auto c1 = convolution!(MOD1)(a, b);
     auto c2 = convolution!(MOD2)(a, b);
@@ -189,9 +465,9 @@ long[] convolutionLL(const ref long[] a, const ref long[] b) @safe nothrow
     foreach (i; 0 .. n + m - 1)
     {
         ulong x;
-        x += (c1[i] + i1) % MOD1 * M2M3;
-        x += (c2[i] + i2) % MOD2 * M1M3;
-        x += (c3[i] + i3) % MOD3 * M1M2;
+        x += (c1[i] * i1) % MOD1 * M2M3;
+        x += (c2[i] * i2) % MOD2 * M1M3;
+        x += (c3[i] * i3) % MOD3 * M1M2;
         long diff = c1[i] - safeMod(cast(long) x, cast(long) MOD1);
         if (diff < 0)
             diff += MOD1;
