@@ -238,12 +238,13 @@ long powMod(long x, long n, long m) @safe pure nothrow @nogc
     assert(0 <= n && 1 <= m);
     if (m == 1)
         return 0;
-    ulong r = 1, y = safeMod(x, m);
+    Barrett bt = Barrett(cast(uint) m);
+    uint r = 1, y = cast(uint) safeMod(x, m);
     while (n)
     {
         if (n & 1)
-            r = (r * y) % m;
-        y = (y * y) % m;
+            r = bt.mul(r, y);
+        y = bt.mul(y, y);
         n >>= 1;
     }
     return r;

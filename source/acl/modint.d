@@ -570,13 +570,13 @@ struct DynamicModInt(int id)
 public:
     static int mod()
     {
-        return _m;
+        return bt.umod();
     }
 
     static void setMod(int m)
     {
         assert(1 <= m);
-        _m = m;
+        bt = Barrett(m);
     }
 
     static mint raw(int v)
@@ -661,9 +661,7 @@ public:
 
     ref mint opOpAssign(string op, T)(T value) if (op == "*" && is(T == mint))
     {
-        ulong z = _v;
-        z *= value._v;
-        _v = cast(uint)(z % umod());
+        _v = bt.mul(_v, value._v);
         return this;
     }
 
@@ -730,10 +728,10 @@ public:
 
 private:
     uint _v;
-    static uint _m = 998_244_353;
+    static Barrett bt = Barrett(998_244_353);
     uint umod()
     {
-        return _m;
+        return bt.umod();
     }
 }
 
