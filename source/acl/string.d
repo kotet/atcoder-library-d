@@ -1,5 +1,270 @@
 module acl.string;
 
+int[] sa_naive(int[] s)
+{
+    import std.range : iota;
+    import std.array : array;
+    import std.algorithm : sort;
+
+    int n = cast(int)(s.length);
+    int[] sa = iota(n).array;
+    sort!((int l, int r) { return s[l .. $] < s[r .. $]; })(sa);
+    return sa;
+}
+
+int[] lcp_naive(int[] s, int[] sa)
+{
+    int n = cast(int) s.length;
+    assert(n);
+    auto lcp = new int[](n - 1);
+    foreach (i; 0 .. n - 1)
+    {
+        int l = sa[i], r = sa[i + 1];
+        while (l + lcp[i] < n && r + lcp[i] < n && s[l + lcp[i]] == s[r + lcp[i]])
+            lcp[i]++;
+    }
+    return lcp;
+}
+
+int[] z_naive(int[] s)
+{
+    int n = cast(int) s.length;
+    auto z = new int[](n);
+    foreach (i; 0 .. n)
+        while (i + z[i] < n && s[z[i]] == s[i + z[i]])
+            z[i]++;
+    return z;
+}
+
+unittest
+{
+    assert([] == suffixArray(""));
+    assert([] == suffixArray(cast(int[])[]));
+
+    assert([] == zAlgorithm(""));
+    assert([] == zAlgorithm(cast(int[])[]));
+}
+
+unittest
+{
+    import std.algorithm : max;
+
+    foreach (n; 1 .. 5 + 1)
+    {
+        int m = 1;
+        foreach (i; 0 .. n)
+            m *= 4;
+        foreach (f; 0 .. m)
+        {
+            auto s = new int[](n);
+            int g = f;
+            int max_c = 0;
+            foreach (i; 0 .. n)
+            {
+                s[i] = g % 4;
+                max_c = max(max_c, s[i]);
+                g /= 4;
+            }
+            auto sa = sa_naive(s);
+            assert(sa == suffixArray(s));
+            assert(sa == suffixArray(s, max_c));
+            assert(lcp_naive(s, sa) == lcpArray(s, sa));
+        }
+    }
+    foreach (n; 1 .. 10 + 1)
+    {
+        int m = 1;
+        foreach (i; 0 .. n)
+            m *= 2;
+        foreach (f; 0 .. m)
+        {
+            auto s = new int[](n);
+            int g = f;
+            int max_c = 0;
+            foreach (i; 0 .. n)
+            {
+                s[i] = g % 2;
+                max_c = max(max_c, s[i]);
+                g /= 2;
+            }
+            auto sa = sa_naive(s);
+            assert(sa == suffixArray(s));
+            assert(sa == suffixArray(s, max_c));
+            assert(lcp_naive(s, sa) == lcpArray(s, sa));
+        }
+    }
+}
+
+unittest
+{
+    import std.algorithm : max;
+
+    foreach (n; 1 .. 5 + 1)
+    {
+        int m = 1;
+        foreach (i; 0 .. n)
+            m *= 4;
+        foreach (f; 0 .. m)
+        {
+            auto s = new int[](n);
+            int g = f;
+            int max_c = 0;
+            foreach (i; 0 .. n)
+            {
+                s[i] = g % 4;
+                max_c = max(max_c, s[i]);
+                g /= 4;
+            }
+            auto sa = saNaive(s);
+            assert(sa_naive(s) == sa);
+        }
+    }
+    foreach (n; 1 .. 10 + 1)
+    {
+        int m = 1;
+        foreach (i; 0 .. n)
+            m *= 2;
+        foreach (f; 0 .. m)
+        {
+            auto s = new int[](n);
+            int g = f;
+            int max_c = 0;
+            foreach (i; 0 .. n)
+            {
+                s[i] = g % 2;
+                max_c = max(max_c, s[i]);
+                g /= 2;
+            }
+            auto sa = saNaive(s);
+            assert(sa_naive(s) == sa);
+        }
+    }
+}
+
+unittest
+{
+    import std.algorithm : max;
+
+    foreach (n; 1 .. 5 + 1)
+    {
+        int m = 1;
+        foreach (i; 0 .. n)
+            m *= 4;
+        foreach (f; 0 .. m)
+        {
+            auto s = new int[](n);
+            int g = f;
+            int max_c = 0;
+            foreach (i; 0 .. n)
+            {
+                s[i] = g % 4;
+                max_c = max(max_c, s[i]);
+                g /= 4;
+            }
+            auto sa = saDoubling(s);
+            assert(sa_naive(s) == sa);
+        }
+    }
+    foreach (n; 1 .. 10 + 1)
+    {
+        int m = 1;
+        foreach (i; 0 .. n)
+            m *= 2;
+        foreach (f; 0 .. m)
+        {
+            auto s = new int[](n);
+            int g = f;
+            int max_c = 0;
+            foreach (i; 0 .. n)
+            {
+                s[i] = g % 2;
+                max_c = max(max_c, s[i]);
+                g /= 2;
+            }
+            auto sa = saDoubling(s);
+            assert(sa_naive(s) == sa);
+        }
+    }
+}
+
+unittest
+{
+    import std.algorithm : max;
+
+    foreach (n; 1 .. 5 + 1)
+    {
+        int m = 1;
+        foreach (i; 0 .. n)
+            m *= 4;
+        foreach (f; 0 .. m)
+        {
+            auto s = new int[](n);
+            int g = f;
+            int max_c = 0;
+            foreach (i; 0 .. n)
+            {
+                s[i] = g % 4;
+                max_c = max(max_c, s[i]);
+                g /= 4;
+            }
+            auto sa = saIs!(-1, -1)(s, max_c);
+            assert(sa_naive(s) == sa);
+        }
+    }
+    foreach (n; 1 .. 10 + 1)
+    {
+        int m = 1;
+        foreach (i; 0 .. n)
+            m *= 2;
+        foreach (f; 0 .. m)
+        {
+            auto s = new int[](n);
+            int g = f;
+            int max_c = 0;
+            foreach (i; 0 .. n)
+            {
+                s[i] = g % 2;
+                max_c = max(max_c, s[i]);
+                g /= 2;
+            }
+            auto sa = saIs!(-1, -1)(s, max_c);
+            assert(sa_naive(s) == sa);
+        }
+    }
+}
+
+unittest
+{
+    foreach (n; 1 .. 100 + 1)
+    {
+        auto s = new int[](n);
+        s[] = 10;
+        assert(sa_naive(s) == suffixArray(s));
+        assert(sa_naive(s) == suffixArray(s, 10));
+        assert(sa_naive(s) == suffixArray(s, 12));
+    }
+}
+
+unittest
+{
+    foreach (n; 1 .. 100 + 1)
+    {
+        auto s = new int[](n);
+        foreach (i; 0 .. n)
+            s[i] = i % 2;
+        assert(sa_naive(s) == suffixArray(s));
+        assert(sa_naive(s) == suffixArray(s, 3));
+    }
+    foreach (n; 1 .. 100 + 1)
+    {
+        auto s = new int[](n);
+        foreach (i; 0 .. n)
+            s[i] = 1 - (i % 2);
+        assert(sa_naive(s) == suffixArray(s));
+        assert(sa_naive(s) == suffixArray(s, 3));
+    }
+}
+
 unittest
 {
     string s = "missisippi";
@@ -11,6 +276,79 @@ unittest
     assert(sa.length == answer.length);
     foreach (i; 0 .. sa.length)
         assert(s[sa[i] .. $] == answer[i]);
+}
+
+unittest
+{
+    assert([0] == suffixArray([0]));
+    assert([0] == suffixArray([-1]));
+    assert([0] == suffixArray([1]));
+    assert([0] == suffixArray([int.min]));
+    assert([0] == suffixArray([int.max]));
+}
+
+unittest
+{
+    string s = "aab";
+    auto sa = suffixArray(s);
+    assert([0, 1, 2] == sa);
+    auto lcp = lcpArray(s, sa);
+    assert([1, 0] == lcp);
+
+    assert(lcp == lcpArray([0, 0, 1], sa));
+    assert(lcp == lcpArray([-100, -100, 100], sa));
+    assert(lcp == lcpArray([int.min, int.min, int.max], sa));
+
+    assert(lcp == lcpArray([long.min, long.min, long.max], sa));
+    assert(lcp == lcpArray([uint.min, uint.min, uint.max], sa));
+    assert(lcp == lcpArray([ulong.min, ulong.min, ulong.max], sa));
+}
+
+unittest
+{
+    string s = "abab";
+    auto z = zAlgorithm(s);
+    assert([4, 0, 2, 0] == z);
+    assert([4, 0, 2, 0] == zAlgorithm([1, 10, 1, 10]));
+    assert(z_naive([0, 0, 0, 0, 0, 0, 0]) == zAlgorithm([0, 0, 0, 0, 0, 0, 0]));
+}
+
+unittest
+{
+    foreach (n; 1 .. 6 + 1)
+    {
+        int m = 1;
+        foreach (i; 0 .. n)
+            m *= 4;
+        foreach (f; 0 .. m)
+        {
+            auto s = new int[](n);
+            int g = f;
+            foreach (i; 0 .. n)
+            {
+                s[i] = g % 4;
+                g /= 4;
+            }
+            assert(z_naive(s) == zAlgorithm(s));
+        }
+    }
+    foreach (n; 1 .. 10 + 1)
+    {
+        int m = 1;
+        foreach (i; 0 .. n)
+            m *= 2;
+        foreach (f; 0 .. m)
+        {
+            auto s = new int[](n);
+            int g = f;
+            foreach (i; 0 .. n)
+            {
+                s[i] = g % 2;
+                g /= 2;
+            }
+            assert(z_naive(s) == zAlgorithm(s));
+        }
+    }
 }
 
 // --- string ---
@@ -70,7 +408,7 @@ int[] saDoubling(const ref int[] s) @safe pure nothrow
     return sa;
 }
 
-int[] saIs(int THRESHOLD_NAIVE = 10, int THRESHOLD_DOUBLING = 40)(const ref int[] s, int upper)
+int[] saIs(int THRESHOLD_NAIVE = 10, int THRESHOLD_DOUBLING = 40)(int[] s, int upper)
 {
     int n = cast(int) s.length;
     if (n == 0)
@@ -204,7 +542,7 @@ int[] saIs(int THRESHOLD_NAIVE = 10, int THRESHOLD_DOUBLING = 40)(const ref int[
     return sa;
 }
 
-int[] suffixArray(const ref int[] s, int upper) @safe pure nothrow
+int[] suffixArray(int[] s, int upper) @safe pure nothrow
 {
     assert(0 <= upper);
     foreach (int d; s)
@@ -213,12 +551,14 @@ int[] suffixArray(const ref int[] s, int upper) @safe pure nothrow
     return sa;
 }
 
-int[] suffixArray(T)(const ref T[] s)
+int[] suffixArray(T)(T[] s)
 {
     import std.range : iota;
+    import std.array : array;
+    import std.algorithm : sort;
 
     int n = cast(int) s.length;
-    int idx = iota(n).array;
+    int[] idx = iota(n).array;
     sort!((int l, int r) => s[l] < s[r])(idx);
     auto s2 = new int[](n);
     int now = 0;
@@ -240,7 +580,7 @@ int[] suffixArray(string s) @safe pure nothrow
     return saIs(s2, 255);
 }
 
-int[] lcpArray(T)(const ref T[] s, const ref int[] sa)
+int[] lcpArray(T)(T[] s, int[] sa)
 {
     int n = cast(int) s.length;
     assert(n >= 1);
@@ -264,7 +604,7 @@ int[] lcpArray(T)(const ref T[] s, const ref int[] sa)
     return lcp;
 }
 
-int[] lcpArray(const ref string s, const ref int[] sa) @safe pure nothrow
+int[] lcpArray(string s, int[] sa) @safe pure nothrow
 {
     int n = cast(int) s.length;
     auto s2 = new int[](n);
@@ -273,7 +613,7 @@ int[] lcpArray(const ref string s, const ref int[] sa) @safe pure nothrow
     return lcpArray(s2, sa);
 }
 
-int[] zAlgorithm(T)(const ref T[] s)
+int[] zAlgorithm(T)(T[] s)
 {
     import std.algorithm : min;
 
@@ -294,7 +634,7 @@ int[] zAlgorithm(T)(const ref T[] s)
     return z;
 }
 
-int[] zAlgorithm(const ref string s) @safe pure nothrow
+int[] zAlgorithm(string s) @safe pure nothrow
 {
     int n = cast(int) s.length;
     auto s2 = new int[](n);

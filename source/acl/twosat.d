@@ -2,6 +2,44 @@ module acl.twosat;
 
 import acl.internal_scc;
 
+unittest
+{
+    TwoSat ts0;
+    assert(ts0.satisfiable());
+    assert([] == ts0.answer());
+    auto ts1 = TwoSat(0);
+    assert(ts1.satisfiable());
+    assert([] == ts1.answer());
+}
+
+unittest
+{
+    {
+        auto ts = TwoSat(1);
+        ts.addClause(0, true, 0, true);
+        ts.addClause(0, false, 0, false);
+        assert(!ts.satisfiable());
+    }
+    {
+        auto ts = TwoSat(1);
+        ts.addClause(0, true, 0, true);
+        assert(ts.satisfiable());
+        assert([true] == ts.answer());
+    }
+    {
+        auto ts = TwoSat(1);
+        ts.addClause(0, false, 0, false);
+        assert(ts.satisfiable());
+        assert([false] == ts.answer());
+    }
+}
+
+unittest
+{
+    TwoSat ts;
+    ts = TwoSat(10);
+}
+
 // --- twosat ---
 
 struct TwoSat
