@@ -16,7 +16,7 @@ jobs:
         uses: dlang-community/setup-dlang@v1
       - name: Install GDC
         run: |
-          sudo apt-add-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
           sudo apt update
           sudo apt -y install gdc-9
           sudo wget https://raw.githubusercontent.com/D-Programming-GDC/GDMD/master/dmd-script -O /usr/bin/gdmd

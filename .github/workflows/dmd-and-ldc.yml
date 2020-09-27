@@ -2,35 +2,46 @@ name: "Test: dmd & ldc"
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
-    test:
-        name: Dub Tests
-        strategy:
-            matrix:
-                os: [ubuntu-latest]
-                dc: [dmd-2.091.0, ldc-1.20.1]
+  test:
+    name: Dub Tests
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        dc: [dmd-2.091.0, ldc-1.20.1]
 
-        runs-on: ${{ matrix.os }}
-        steps:
-            - uses: actions/checkout@v2
+    runs-on: ${{ matrix.os }}
+    env:
+      COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
 
-            - name: Install D compiler
-              uses: dlang-community/setup-dlang@v1
-              with:
-                  compiler: ${{ matrix.dc }}
+      - name: Install D compiler
+        uses: dlang-community/setup-dlang@v1
+        with:
+          compiler: ${{ matrix.dc }}
 
-            - name: Install libcurl
-              run: sudo apt update && sudo apt install -y libcurl4-openssl-dev
+      - name: Install libcurl
+        if: matrix.dc == 'dmd-2.091.0'
+        run: |
+          if [[ -z "${COVERALLS_REPO_TOKEN}" ]]; then
+            echo skipped
+          else
+            sudo apt update && sudo apt install -y --fix-missing libcurl4-openssl-dev
+          fi
 
-            - name: Run tests
-              run: dub test -b unittest-cov
-            
-            - name: Upload coverage data
-              if: matrix.dc == 'dmd-2.091.0'
-              env:
-                COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-              run: dub run doveralls
+      - name: Run tests
+        run: dub test -b unittest-cov
+
+      - name: Upload coverage data
+        if: matrix.dc == 'dmd-2.091.0'
+        run: |
+          if [[ -z "${COVERALLS_REPO_TOKEN}" ]]; then
+            echo skipped
+          else
+            dub run -y doveralls
+          fi
