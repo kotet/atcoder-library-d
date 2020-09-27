@@ -46,11 +46,11 @@ unittest
         }
         foreach (a; v)
         {
-            long a2 = a;
+            immutable long a2 = a;
             assert((a2 * a2) % mod == bt.mul(a, a));
             foreach (b; v)
             {
-                long b2 = b;
+                immutable long b2 = b;
                 assert((a2 * b2) % mod == bt.mul(a, b));
             }
         }
@@ -75,9 +75,9 @@ unittest
     assert(ctIsPrime(1_000_000_007));
     assert(!ctIsPrime(1_000_000_008));
     assert(ctIsPrime(1_000_000_009));
-    foreach (i; 0 .. 10000 + 1)
+    foreach (i; 0 .. 10_000 + 1)
         assert(isPrimeNaive(i) == ctIsPrime(i));
-    foreach (i; 0 .. 10000 + 1)
+    foreach (i; 0 .. 10_000 + 1)
     {
         auto x = int.max - i;
         assert(isPrimeNaive(x) == ctIsPrime(x));
@@ -122,9 +122,9 @@ unittest
         {
             if (b <= 0)
                 continue;
-            long a2 = safeMod(a, b);
+            immutable long a2 = safeMod(a, b);
             auto eg = invGcd(a, b);
-            auto g = gcd(a2, b);
+            immutable g = gcd(a2, b);
             assert(g == eg[0]);
             assert(0 <= eg[1]);
             assert(eg[1] <= b / eg[0]);
@@ -137,7 +137,7 @@ unittest
     {
         if (!ctIsPrime(m))
             continue;
-        int n = ctPrimitiveRoot(m);
+        immutable int n = ctPrimitiveRoot(m);
         assert(1 <= n);
         assert(n < m);
         int x = 1;
@@ -196,7 +196,7 @@ unittest
 
     foreach (i; 0 .. 1000)
     {
-        int x = int.max - i;
+        immutable int x = int.max - i;
         if (!ctIsPrime(x))
             continue;
         assert(isPrimitiveRoot(x, ctPrimitiveRoot(x)));
@@ -207,6 +207,8 @@ unittest
 
 import std.typecons : Tuple;
 
+/// Return: `x mod m`
+/// Param: `1 <= m`
 ulong safeMod(long x, long m) @safe pure nothrow @nogc
 {
     x %= m;
@@ -215,43 +217,55 @@ ulong safeMod(long x, long m) @safe pure nothrow @nogc
     return x;
 }
 
+/// Return: `a*b` (128bit width)
 ulong[2] umul128(ulong a, ulong b) @safe @nogc pure nothrow
 {
-    ulong au = a >> 32;
-    ulong bu = b >> 32;
-    ulong al = a & ((1UL << 32) - 1);
-    ulong bl = b & ((1UL << 32) - 1);
+    immutable ulong au = a >> 32;
+    immutable ulong bu = b >> 32;
+    immutable ulong al = a & ((1UL << 32) - 1);
+    immutable ulong bl = b & ((1UL << 32) - 1);
+
     ulong t = al * bl;
-    ulong w3 = t & ((1UL << 32) - 1);
+    immutable ulong w3 = t & ((1UL << 32) - 1);
     ulong k = t >> 32;
     t = au * bl + k;
+
     k = t & ((1UL << 32) - 1);
-    ulong w1 = t >> 32;
+    immutable ulong w1 = t >> 32;
     t = al * bu + k;
     k = t >> 32;
     return [au * bu + w1 + k, t << 32 + w3];
 }
 
+/// Fast modular multiplication by barrett reduction
+/// Reference: https://en.wikipedia.org/wiki/Barrett_reduction
+/// NOTE: reconsider after Ice Lake
 struct Barrett
 {
+    ///
     uint _m;
+    ///
     ulong im;
+    /// Param: `1 <= m < 2^31`
     this(uint m) @safe @nogc pure nothrow
     {
         _m = m;
         im = (cast(ulong)(-1)) / m + 1;
     }
 
+    /// Return: `m`
     uint umod() @safe @nogc pure nothrow
     {
         return _m;
     }
 
+    /// Param: `0 <= a < m`, `0 <= b < m`
+    /// Return: `a * b % m`
     uint mul(uint a, uint b) @safe @nogc pure nothrow
     {
         ulong z = a;
         z *= b;
-        ulong x = umul128(z, im)[0];
+        immutable ulong x = umul128(z, im)[0];
         uint v = cast(uint)(z - x * _m);
         if (_m <= v)
             v += _m;
@@ -259,6 +273,8 @@ struct Barrett
     }
 }
 
+/// Param: `0 <= n`, `1 <= m`
+/// Return: `(x ^^ n) % m`
 long ctPowMod(long x, long n, int m) @safe pure nothrow @nogc
 {
     if (m == 1)
@@ -276,6 +292,10 @@ long ctPowMod(long x, long n, int m) @safe pure nothrow @nogc
     return r;
 }
 
+/// Reference:
+/// M. Forisek and J. Jancina,
+/// Fast Primality Testing for Integers That Fit into a Machine Word
+/// Param: `0 <= n`
 bool ctIsPrime(int n) @safe pure nothrow @nogc
 {
     if (n <= 1)
@@ -304,8 +324,11 @@ bool ctIsPrime(int n) @safe pure nothrow @nogc
     return true;
 }
 
+/// ditto
 enum bool isPrime(int n) = ctIsPrime(n);
 
+/// Param: `1 <= b`
+/// Return: `pair(g, x)` s.t. `g = gcd(a, b)`, `x*a = g (mod b)`, `0 <= x < b/g`
 Tuple!(long, long) invGcd(long a, long b) @safe pure nothrow @nogc
 {
     a = safeMod(a, b);
@@ -314,7 +337,7 @@ Tuple!(long, long) invGcd(long a, long b) @safe pure nothrow @nogc
     long s = b, t = a, m0 = 0, m1 = 1;
     while (t)
     {
-        long u = s / t;
+        immutable long u = s / t;
         s -= t * u;
         m0 -= m1 * u;
         long tmp = s;
@@ -329,6 +352,9 @@ Tuple!(long, long) invGcd(long a, long b) @safe pure nothrow @nogc
     return Tuple!(long, long)(s, m0);
 }
 
+/// Compile time primitive root
+/// Param: m must be prime
+/// Return: primitive root (and minimum in now)
 int ctPrimitiveRoot(int m) @safe pure nothrow @nogc
 {
     if (m == 2)
@@ -370,4 +396,5 @@ int ctPrimitiveRoot(int m) @safe pure nothrow @nogc
     }
 }
 
+/// ditto
 enum primitiveRoot(int m) = ctPrimitiveRoot(m);
