@@ -54,13 +54,13 @@ unittest
 struct Dsu
 {
 public:
-    this(int n) @safe nothrow
+    this(long n) @safe nothrow
     {
-        _n = n, parent_or_size = new int[](n);
+        _n = cast(int) n, parent_or_size = new int[](n);
         parent_or_size[] = -1;
     }
 
-    int merge(int a, int b) @safe nothrow @nogc
+    int merge(long a, long b) @safe nothrow @nogc
     {
         assert(0 <= a && a < _n);
         assert(0 <= b && b < _n);
@@ -78,22 +78,22 @@ public:
         return x;
     }
 
-    bool same(int a, int b) @safe nothrow @nogc
+    bool same(long a, long b) @safe nothrow @nogc
     {
         assert(0 <= a && a < _n);
         assert(0 <= b && b < _n);
         return leader(a) == leader(b);
     }
 
-    int leader(int a) @safe nothrow @nogc
+    int leader(long a) @safe nothrow @nogc
     {
         assert(0 <= a && a < _n);
         if (parent_or_size[a] < 0)
-            return a;
+            return cast(int) a;
         return parent_or_size[a] = leader(parent_or_size[a]);
     }
 
-    int size(int a) @safe nothrow @nogc
+    int size(long a) @safe nothrow @nogc
     {
         assert(0 <= a && a < _n);
         return -parent_or_size[leader(a)];
